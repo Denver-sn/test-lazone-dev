@@ -192,14 +192,6 @@ export default function StorePage() {
                   : "Contact Us"}
               </Button>
             </div>
-            {/* <div className="flex-1 relative h-[200px] rounded-xl overflow-hidden">
-              <Image
-                src="https://images.unsplash.com/photo-1593108408993-58ee9c7c3995?ixlib=rb-1.2.1&auto=format&fit=crop&w=1400&q=80"
-                alt="Support team"
-                fill
-                className="object-cover"
-              />
-            </div> */}
           </div>
         </div>
       </div>
