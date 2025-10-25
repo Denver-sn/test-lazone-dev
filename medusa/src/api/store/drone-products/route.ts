@@ -173,7 +173,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     count: out.length,
     limit,
     offset,
-    // info brute côté source si jamais tu veux la vraie pagination DB
     source_total: products.length,
     products: out,
   });
