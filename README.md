@@ -2,6 +2,11 @@
 
 A modern drone sales and rental platform built with Medusa.js and Next.js.
 
+## Demo Links
+
+- Frontend: [https://test-lazone-ui.denver-dev.com](https://test-lazone-ui.denver-dev.com)
+- Medusa Backend: [https://es48ck8csw044o8gss0wokog.dexchange.sn](https://es48ck8csw044o8gss0wokog.dexchange.sn)
+
 ## Prerequisites 📋
 
 - Docker
