@@ -11,13 +11,11 @@ export function useCart() {
   useEffect(() => {
     // Initial cart state
     const initialCart = CartStore.getCart()
-    console.log("Initial cart:", initialCart)
     setCart(initialCart)
 
     // Listen for cart updates
     const handleCartUpdate = () => {
       const updatedCart = CartStore.getCart()
-      console.log("Cart updated:", updatedCart)
       setCart(updatedCart)
     }
 
