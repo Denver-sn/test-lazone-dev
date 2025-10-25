@@ -1,117 +1,134 @@
-# Boilerplate MedusaJS + Next.js — Docker Setup
+# Le Drone Hub 🚁
 
-This repository is dockerized to run a full local stack:
+A modern drone sales and rental platform built with Medusa.js and Next.js.
 
-- Postgres 16
-- Redis 7
-- Medusa API (port 9000)
-- Next.js web storefront (port 3000)
+## Prerequisites 📋
 
-All Docker artefacts are at the repo root:
+- Docker
+- Docker Compose
+- Git
 
-- `docker-compose.yml`
-- `.env.example` (copy to `.env`)
-- `medusa/Dockerfile`
-- `web/Dockerfile`
+## Docker Installation 🐳
 
-## Prerequisites
-
-- Docker Desktop (or Docker Engine) with Compose v2
-- Node 20+ if you plan to run locally without Docker (not required for Docker)
-
-## 1) Configure environment variables
-
-Copy the example file and edit values if needed:
+1. **Clone the repository**
 
 ```bash
-cp .env.example .env
+git clone https://github.com/Denver-sn/test-lazone-dev.git
+cd test-lazone-dev
 ```
 
-Required variables:
+2. **Environment Variables Setup**
 
-- `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY` — publishable API key for the storefront.
-- `MEDUSA_BACKEND_URL` — how the browser reaches the Medusa API. Defaults to `http://localhost:9000` in Docker.
+Create a `.env` file in the `web` directory:
 
-Medusa API defaults:
+```env
+NEXT_PUBLIC_MEDUSA_BACKEND_URL=http://localhost:9000
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+```
 
-- `DATABASE_URL=postgresql://medusa:medusa@db:5432/medusa`
-- `STORE_CORS=http://localhost:3000`
-- `ADMIN_CORS=http://localhost:7001`
-- `AUTH_CORS=http://localhost:3000`
-- `JWT_SECRET` and `COOKIE_SECRET` set to `supersecret` by default (change for real use!)
-- `REDIS_URL=redis://redis:6379`
+Create a `.env` file in the `medusa` directory:
 
-## 2) Start the stack
+```env
+DATABASE_TYPE=postgres
+DATABASE_URL=postgres://postgres:postgres@postgres:5432/medusa
+REDIS_URL=redis://redis:6379
+```
 
-Build containers (first time or after Dockerfile changes):
+3. **Launch with Docker Compose**
 
 ```bash
-docker compose build
+docker-compose up --build
 ```
 
-Start containers:
+The application will be available at:
+
+- Frontend: [http://localhost:3000](http://localhost:3000)
+- Medusa Backend: [http://localhost:9000](http://localhost:9000)
+
+## Local Development 💻
+
+To run the project in development mode:
+
+1. **Medusa Backend**
 
 ```bash
-docker compose up -d
+cd medusa
+yarn install
+npx medusa exec ./src/scripts/seed.ts
+
+medusa develop
 ```
 
-Check logs (tail all services):
+Create an admin account and then genereate publishable key in the dashboard admin
+
+```
+npx medusa user -e admin@local.dev -p Passw0rd!
+```
+
+2. **Next.js Frontend**
 
 ```bash
-docker compose logs -f
+cd web
+yarn install
+yarn dev
 ```
 
-## 3) Access the apps
+## Tech Stack 🛠️
 
-- Web storefront: http://localhost:3000
-- Medusa API: http://localhost:9000
-- Postgres: localhost:5432 (inside Docker network: `db:5432`)
-- Redis: localhost:6379 (inside Docker network: `redis:6379`)
+- **Frontend**
 
-## 4) Seed sample data (optional)
+  - Next.js 14
+  - TypeScript
+  - Tailwind CSS
+  - Medusa UI Components
 
-You can run the Medusa seed script inside the API container:
+- **Backend**
+  - Medusa.js
+  - PostgreSQL
+  - Redis
 
-```bash
-# once containers are running
-# use the compiled seed script inside the container
-docker compose exec medusa sh -lc "node dist/scripts/seed.js"
-```
+## Core Features 🎯
 
-This uses the script defined in `medusa/package.json` and `src/scripts/seed.ts`.
+- Multilingual support (FR/EN)
+- Unified cart management (purchases and rentals)
+- Booking system with date selection
+- Automatic rental price calculation
+- Admin interface for product management
+- Responsive and modern design
 
-## 5) Stopping and cleaning up
+## Key Components
 
-Stop containers:
+- **Product Management**
 
-```bash
-docker compose down
-```
+  - Dynamic product catalog
+  - Multilingual product descriptions
+  - Price management for both sales and rentals
 
-Stop and remove volumes (DB data):
+- **Cart System**
 
-```bash
-docker compose down -v
-```
+  - Mixed cart supporting both purchases and rentals
+  - Real-time price calculations
+  - Quantity management
+  - Rental period selection
 
-## Environment overview
+- **User Interface**
+  - Language switcher
+  - Responsive navigation
+  - Modern and clean design
+  - Loading states and animations
 
-- Medusa config: `medusa/medusa-config.ts` reads from environment variables such as `DATABASE_URL`, `STORE_CORS`, `ADMIN_CORS`, `AUTH_CORS`, `JWT_SECRET`, `COOKIE_SECRET`.
-- Web config: `web/src/lib/config.ts` reads `MEDUSA_BACKEND_URL` and `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY`.
-- `web/next.config.js` enforces the presence of `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY` at startup.
+## API Integration
 
-## Notes
+The application integrates with a Medusa backend through:
 
-- Containers run with `NODE_ENV=production` and use `yarn start` within each service.
-- Ports exposed:
-  - Medusa: `9000:9000`
-  - Web: `3000:3000`
-  - Postgres: `5432:5432`
-  - Redis: `6379:6379`
-- Change any values in `.env` and re-run `docker compose up -d`.
+- Product endpoints for catalog management
+- Cart endpoints for purchase and rental management
+- Custom endpoints for rental-specific features
 
-## Troubleshooting
+## Contributing 🤝
 
-- If the web container exits immediately with an env error, ensure `.env` contains `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY`.
-- If Medusa fails to connect to DB, verify `DATABASE_URL` and that the `db` service is healthy (`docker compose ps`).
-- For a clean state, run `docker compose down -v` to remove volumes and start again.
+Contributions are welcome! Feel free to open an issue or submit a pull request.
+
+## License 📄
+
+This project is licensed under the MIT License. See the `LICENSE` file for details.
