@@ -87,22 +87,14 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
   const saleModeFilter = req.query.sale_mode as SaleMode | undefined;
   const q = (req.query.q as string | undefined)?.toLowerCase()?.trim();
 
-  // Services v2
-  const productService = req.scope.resolve(
-    Modules.PRODUCT
-  ) as ProductTypes.IProductModuleService;
-  const priceService = req.scope.resolve(
-    Modules.PRICING
-  ) as PricingTypes.IPricingModuleService;
   const regionService = req.scope.resolve(Modules.REGION) as any;
   const query = req.scope.resolve(ContainerRegistrationKeys.QUERY);
 
-  // Récupérer les régions
+  // get regions
   const regions = await regionService.listRegions();
   const regionEU = regions.find((r: any) => r.name === "Europe");
   const regionUS = regions.find((r: any) => r.name === "US");
 
-  // On récupère les produits publiés avec leurs prix calculés
   const { data: products } = await query.graph({
     entity: "product",
     fields: [
@@ -126,9 +118,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     },
   });
 
-  console.log("products", JSON.stringify(products, null, 2));
-
-  // Map + filtres (sale_mode, q) côté serveur
+  // Map + filtres (sale_mode, q)
   const out: DroneProduct[] = [];
   for (const p of products) {
     const md = (p.metadata as unknown as ProductMetadata) || {
@@ -138,10 +128,8 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       description_i18n: { fr: "", en: "" },
     };
 
-    // Filtre sale_mode si demandé
     if (saleModeFilter && (md.sale_mode ?? "both") !== saleModeFilter) continue;
 
-    // Recherche simple q (dans title, description et i18n)
     if (q) {
       const t = (p.title || "").toLowerCase();
       const d = (p.description || "").toLowerCase();
@@ -150,7 +138,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
       if (![t, d, ti, di].some((s) => s.includes(q))) continue;
     }
 
-    // Prix de vente via le premier variant du produit
     const variant = (p.variants || [])[0] as ExtendedProductVariantDTO;
     let sale_price_minor: number | null = null;
     if (variant?.prices) {

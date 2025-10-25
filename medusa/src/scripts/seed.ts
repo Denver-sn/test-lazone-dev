@@ -382,7 +382,6 @@ export default async function seedDemoData({ container }: ExecArgs) {
     [Modules.FULFILLMENT]: { fulfillment_set_id: fulfillmentSetUS.id },
   });
 
-  // Shipping options (amounts in MINOR UNITS: 1000 = 10.00)
   const shippingOptionNames = [
     "Standard EU",
     "Express EU",
@@ -724,25 +723,6 @@ export default async function seedDemoData({ container }: ExecArgs) {
     logger.info(`Created products: ${JSON.stringify(products, null, 2)}`);
 
     // Try to get prices for each variant
-    const pricingService = container.resolve(Modules.PRICING);
-    for (const product of products) {
-      const variant = product.variants[0];
-      logger.info(`Checking prices for variant ${variant.id}...`);
-
-      // Try to get prices in EUR
-      const eurPrices = await pricingService.listPrices({
-        id: [variant.id],
-        currency_code: "EUR",
-      });
-      logger.info(`EUR prices: ${JSON.stringify(eurPrices, null, 2)}`);
-
-      // Try to get prices in USD
-      const usdPrices = await pricingService.listPrices({
-        id: [variant.id],
-        currency_code: "USD",
-      });
-      logger.info(`USD prices: ${JSON.stringify(usdPrices, null, 2)}`);
-    }
   }
 
   // -----------------------------
