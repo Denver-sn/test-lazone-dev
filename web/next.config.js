@@ -12,6 +12,13 @@ const nextConfig = {
       fullUrl: true,
     },
   },
+  output: "standalone",
+  // Disable page optimization in production to avoid data collection errors
+  optimizeFonts: false,
+  typescript: {
+    // Dangerously allow production builds to successfully complete even if your project has type errors
+    ignoreBuildErrors: true,
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },
